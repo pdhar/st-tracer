@@ -1,6 +1,6 @@
-const koaTracerMiddleware = require("./koa-middleware");
-const koaRequest = require("./koa-request");
-const superAgent = require("./superagent");
+const koaTracerMiddleware = require("./src/koa-middleware");
+const koaRequest = require("./src/koa-request");
+const superAgent = require("./src/superagent");
 
 module.exports = {
 	koaTracerMiddleware,

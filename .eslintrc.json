@@ -1,28 +1,28 @@
 {
-env: {
-es6: true,
-node: true,
-mocha: true
+"env": {
+"es6": true,
+"node": true,
+"mocha": true
 },
-extends: "eslint:recommended",
-rules: {
-indent: [
+"extends": "eslint:recommended",
+"rules": {
+"indent": [
 2,
 "tab"
 ],
-no-mixed-spaces-and-tabs: [
+"no-mixed-spaces-and-tabs": [
 2,
 "smart-tabs"
 ],
-linebreak-style: [
+"linebreak-style": [
 2,
 "unix"
 ],
-quotes: [
+"quotes": [
 2,
 "double"
 ],
-semi: [
+"semi": [
 2,
 "always"
 ]
