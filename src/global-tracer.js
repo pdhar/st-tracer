@@ -1,9 +1,6 @@
-const {BatchRecorder} = require("zipkin");
+const {BatchRecorder, Tracer} = require("zipkin");
 const {HttpLogger} = require("zipkin-transport-http");
 const CLSContext = require("zipkin-context-cls");
-const {Tracer} = require("zipkin");
-
-console.log("INSIDE STracker");
 
 var STracker = (() => {
 	function STracker(){
@@ -20,7 +17,6 @@ var STracker = (() => {
 		});	
 
 		this.tracer = new Tracer({ctxImpl: this.ctxImpl, recorder: this.recorder});
-	
 	}
 
 	// Object can have instance methods as usually.

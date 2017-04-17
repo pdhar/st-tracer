@@ -1,6 +1,7 @@
 "use strict";
 const koa = require("koa");
 const _ = require("koa-route");
+const koaMiddleware = require("../../src/koa-middleware");
 
 module.exports = function () {
 
@@ -26,7 +27,8 @@ module.exports = function () {
 			ctx.body = pet.name + " is a " + pet.species;
 		}
 	};
-
+	
+	app.use(koaMiddleware("koa-test"));
 	app.use(_.get("/", pets.list));
 	app.use(_.get("/pets/:name", pets.show));
 
