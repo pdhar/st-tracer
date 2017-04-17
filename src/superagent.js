@@ -1,31 +1,40 @@
-const {
-    Tracer, 
+const { 
 	Annotation, 
-	Request, 
-	ExplicitContext
+	Request
 } = require("zipkin");
 
-const _superagent = require("superagent");
-const overrideSuperAgent = {};
+function getOverridenSuperAgent(tracer) {
 
-for (const attr in _superagent) {
-	if (_superagent.hasOwnProperty(attr)) {
-		if (["get","post","put","patch","head","del"].indexOf(attr) > -1) {
+	// console.log("tracer ", tracer);
+	const _tracer = tracer;
+	const _superagent = require("superagent");
+	const overrideSuperAgent = {};
+
+	for (const attr in _superagent) {
+		if (_superagent.hasOwnProperty(attr)) {
+			if (["get","post","put","patch","head","del"].indexOf(attr) > -1) {
+				overrideSuperAgent[attr] = _superagent[attr];
+				overrideSuperAgent[`${attr}WithTrace`] = (url, opts) => zipkinWrapper(_superagent, _tracer, attr, url, opts);
+			}
+		}
+		else {
 			overrideSuperAgent[attr] = _superagent[attr];
-			overrideSuperAgent[`${attr}WithTrace`] = (url, opts) => zipkinWrapper(_superagent, attr, url, opts);
 		}
 	}
-	else {
-		overrideSuperAgent[attr] = _superagent[attr];
-	}
+
+	return overrideSuperAgent;
 }
 
-function zipkinWrapper(superagent, attr, url, opts={}) {
+function zipkinWrapper(superagent, tracer, attr, url, opts={}) {
 	
+	// console.log("####### tracer ", tracer);
 	const {serviceName = "unknown", remoteServiceName} = opts;
-	const ctxImpl = new ExplicitContext();
-	const {recorder} = require("./recorder");
-	const tracer = new Tracer({ctxImpl, recorder});
+	// const ctxImpl = new ExplicitContext();
+	// const {recorder} = require("./recorder");
+	// const tracer = new Tracer({ctxImpl, recorder});
+
+	if(!tracer)
+		tracer = require("../../src/global-tracer")().tracer;
 
 	return new Promise((resolve, reject) => {
 
@@ -47,13 +56,13 @@ function zipkinWrapper(superagent, attr, url, opts={}) {
 			}
 
 			const zipkinOpts = Request.addZipkinHeaders(opts, traceId);
-			console.log("zipkinOpts ", zipkinOpts);
-			console.log("attr", attr);
+			// console.log("zipkinOpts ", zipkinOpts);
+			// console.log("attr", attr);
+			// console.log("tracer", tracer);
 
 			superagent[attr](url)
 			.set(zipkinOpts.headers)
 			.then(res => {
-				console.log("RES: ", res);
 				tracer.scoped(() => {
 					tracer.setId(traceId);
 					tracer.recordBinary("http.status_code", res.status.toString());
@@ -73,4 +82,4 @@ function zipkinWrapper(superagent, attr, url, opts={}) {
 	});
 }
 
-module.exports = overrideSuperAgent;
+module.exports = (tracer) => getOverridenSuperAgent(tracer);

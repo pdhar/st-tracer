@@ -7,14 +7,11 @@
 	For use in Koa.
 */
 
-const {
-    Tracer, 
+const { 
 	Annotation, 
-	Request, 
-	ExplicitContext
+	Request
 } = require("zipkin");
 
-const helpers = require("./helpers");
 const _request = require("request");
 
 function request (uri, options) { 
@@ -27,28 +24,21 @@ function request (uri, options) {
 
 function generateTrace(error, response, uri, options={}) {
 	const serviceName = "diagram-backend", remoteServiceName="event-service";
-	console.log("@@@@@@@@@@@@ KOA ");
 	const {tracer, ctxImpl, localVariable} = require("./global-tracer")();
 
+	console.log("@@@@@@@@@@@@ KOA ");
 	console.log("localVariable ", localVariable);
-
 	console.log("###### KOA REQ TRACER", tracer);
 	console.log("###### KOA REQ ctxImpl", ctxImpl.getContext());
-	
-	// const traceId = ctxImpl.getContext().traceId;
-	// console.log("@@@@@@ TID: ", traceId);
 
 	const prevContext = ctxImpl.getContext();
-
 	console.log("###### prevContext ", prevContext);
 	console.log("response ", response.body);
 
 	const childId = tracer.createChildId();
-		
 	console.log("@@@@@@@@@ childId ", childId);
 
 	// return;
-
 	// ctxImpl.letContext({error, response, uri, options, prevContext}, () => {
 
 		// tracer.scoped(() => {
@@ -112,8 +102,6 @@ function generateTrace(error, response, uri, options={}) {
 			tracer.recordAnnotation(new Annotation.ClientRecv());
 		});
 	}
-		// });
-	// });
 }
 
 //copy request"s properties

@@ -4,10 +4,10 @@ const {
 	Annotation, 
 	HttpHeaders: Header,
 	TraceId,
-	option: {Some, None}
+	option: {Some}
 } = require("zipkin");
 
-module.exports = (serviceName, tracer, ctxImpl) => {
+module.exports = (serviceName, tracer) => {
 	
 	return function* (next) {
 
@@ -17,15 +17,14 @@ module.exports = (serviceName, tracer, ctxImpl) => {
 		].join(", "));
 
 		if (helpers.containsRequiredHeaders(this.req.headers)) {
-			console.log("@@@@@@@@@@ YOLO !!");
-			
+
 			const spanId = helpers.readHeader(this.req.headers, Header.SpanId);
 			spanId.ifPresent(sid => {
 				const traceId = helpers.readHeader(this.req.headers, Header.TraceId);
 				const parentSpanId = helpers.readHeader(this.req.headers, Header.ParentSpanId);
 				const sampled = helpers.readHeader(this.req.headers, Header.Sampled);
 				const flags = helpers.readHeader(this.req.headers, Header.Flags).flatMap(helpers.stringToIntOption).getOrElse(0);
-				console.log("#### TraceId", traceId);
+				
 				const id = new TraceId({
 					traceId,
 					parentId: parentSpanId,
@@ -35,11 +34,9 @@ module.exports = (serviceName, tracer, ctxImpl) => {
 				});
 				tracer.setId(id);
 			});
-
-			console.log("@@@@@@@@@@ ???? SPANID !! ", spanId);
 		} 
 		else {
-			console.log("!!!!!!!!! NOT FOUND HEADERS");
+
 			tracer.setId(tracer.createRootId());
 
 			if (helpers.readHeader(this.req.headers, Header.Flags)) {
@@ -58,11 +55,6 @@ module.exports = (serviceName, tracer, ctxImpl) => {
 
 		const id = tracer.id;
 
-		console.log("@@@@@@@@@@ ID: ", id);
-
-		console.log("@@@@@@@@@@@@ CONTEXT ", ctxImpl.getContext());
-		console.log("serviceName ", serviceName);
-
 		tracer.recordServiceName(serviceName);
 		tracer.recordRpc("GET");
 		tracer.recordAnnotation(new Annotation.ServerRecv());
@@ -76,7 +68,6 @@ module.exports = (serviceName, tracer, ctxImpl) => {
 				tracer.recordBinary("http.status_code", this.res.statusCode.toString());
 				tracer.recordAnnotation(new Annotation.ServerSend());
 			});
-			console.log("########## ON FINISH");
 		};
 
 		this.res.once("close", onCloseOrFinish);
