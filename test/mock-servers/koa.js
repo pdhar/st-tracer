@@ -23,18 +23,17 @@ module.exports = function (tracerOptions) {
 			const superagent = require("../../index").superagent(tracerOptions.tracer);
 			console.log("####### superagent ", superagent);
 
-			superagent.getWithTrace(`${tracerOptions.restifyUrl}`, 
+			return superagent.getWithTrace(`${tracerOptions.restifyUrl}`, 
 			{ serviceName: "koa-client", remoteServiceName: "restify-server"})
 			.then((res) => {
 				console.log("RES: ", res.body);
+				const names = Object.keys(db);
+			
+				ctx.body = { pets:  names.join(", ") };
 			})
 			.catch((err) => {
 				console.log("ERR: ", err);
 			});
-
-			const names = Object.keys(db);
-			
-			ctx.body = { pets:  names.join(", ") };
 		},
 
 		show: (ctx, name) => {

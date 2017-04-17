@@ -59,13 +59,13 @@ describe("for a running restify service", function() {
 				
 				expect(annotations[0].annotation.annotationType).to.equal("ServiceName");
 				expect(annotations[0].annotation.serviceName).to.equal("koa-test");
+				
+				// Verify that restify annotation have been added.
+				const annotations_2 = record_2.args.map(args => args[0]);
+				console.log("@@@@@@@@ annotations_2 ", annotations_2);
 			})
 			.expect(200, done);
 
 		});
-
-		
 	});
-
 });
-

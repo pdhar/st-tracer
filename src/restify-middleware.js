@@ -34,9 +34,8 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 	if(!tracer)
 		tracer = require("./global-tracer")().tracer;
 
-	// return (req, res, next) => {console.log("###### RESTIFY !!!!!!" , tracer); next();};
 	return (req, res, next) => {
-		try {
+		// try {
 			
 		
 		tracer.scoped(() => {
@@ -51,6 +50,7 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 			}
 
 			if (containsRequiredHeaders(req)) {
+			
 				const spanId = readHeader(Header.SpanId);
 				spanId.ifPresent(sid => {
 					const traceId = readHeader(Header.TraceId);
@@ -83,6 +83,7 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 
 			const id = tracer.id;
 
+			console.log("service name : ", serviceName);
 			tracer.recordServiceName(serviceName);
 			tracer.recordRpc(req.method);
 			tracer.recordBinary("http.url", url.format({
@@ -114,9 +115,9 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 			next();
 		});
 
-		} catch (error) {
-			console.log("ERROR ", error);
-			next();
-		}
+		// } catch (error) {
+		// 	console.log("ERROR ", error);
+		// 	next();
+		// }
 	};
 };
