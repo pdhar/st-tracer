@@ -1,8 +1,7 @@
 "use strict";
 const koa = require("koa");
 const _ = require("koa-route");
-const koaMiddleware = require("../../src/koa-middleware");
-
+const koaMiddleware = require("../../index").koaTracerMiddleware;
 
 module.exports = function (tracerOptions) {
 	console.log("tracerOptions: ", tracerOptions);
@@ -21,7 +20,7 @@ module.exports = function (tracerOptions) {
 		list: (ctx) => {
 
 			// Call restify server for data.
-			const superagent = require("../../src/superagent")(tracerOptions.tracer);
+			const superagent = require("../../index").superagent(tracerOptions.tracer);
 			console.log("####### superagent ", superagent);
 
 			superagent.getWithTrace(`${tracerOptions.restifyUrl}`, 
