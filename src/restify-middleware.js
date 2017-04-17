@@ -29,10 +29,18 @@ function stringToIntOption(str) {
 	}
 }
 
-module.exports = function restifyMiddleware({tracer, serviceName = "unknown", port = 0}) {
-	// console.log("RESTIFY !!!!!!")
-	return function zipkinRestifyMiddleware(req, res, next) {
+module.exports = function restifyMiddleware(serviceName = "unknown", tracer, port = 0) {
+	
+	if(!tracer)
+		tracer = require("./global-tracer")().tracer;
+
+	// return (req, res, next) => {console.log("###### RESTIFY !!!!!!" , tracer); next();};
+	return (req, res, next) => {
+		try {
+			
+		
 		tracer.scoped(() => {
+			
 			function readHeader(header) {
 				const val = req.header(header);
 				if (val != null) {
@@ -105,5 +113,10 @@ module.exports = function restifyMiddleware({tracer, serviceName = "unknown", po
 
 			next();
 		});
+
+		} catch (error) {
+			console.log("ERROR ", error);
+			next();
+		}
 	};
 };

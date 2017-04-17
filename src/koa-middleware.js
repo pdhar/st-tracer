@@ -8,7 +8,10 @@ const {
 } = require("zipkin");
 
 module.exports = (serviceName, tracer) => {
-	
+
+	if(!tracer)
+		tracer = require("./global-tracer")().tracer;
+
 	return function* (next) {
 
 		this.set("Access-Control-Allow-Headers", [

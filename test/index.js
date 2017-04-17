@@ -12,7 +12,7 @@ let app_2, server_2, record_2;
 beforeEach("start restify server", function (done) {
 	// Create a restify server.
 	record_2 = sinon.spy();
-	const recorder = {record_2};
+	const recorder = {record: record_2};
 	const ctxImpl = new ExplicitContext();
 	const tracer = new Tracer({recorder, ctxImpl});
 	

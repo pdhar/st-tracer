@@ -1,6 +1,6 @@
 "use strict";
 const restify = require("restify");
-const restifyMiddleware = require("../../src/restify-middleware");
+const restifyMiddleware = require("../../index").restifyTracerMiddleware;
 
 module.exports = function (tracerOptions) {
 	const app = restify.createServer();
@@ -30,7 +30,7 @@ module.exports = function (tracerOptions) {
 		}
 	};
 
-	// app.use(restifyMiddleware("restify-server", tracerOptions));
+	app.use(restifyMiddleware("restify-server", tracerOptions.tracer));
 
 	app.get("/", (req, res, next)=>{
 		console.log("####### HIT ", pets.list());
