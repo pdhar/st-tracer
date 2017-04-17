@@ -3,10 +3,13 @@ const koa = require("koa");
 const _ = require("koa-route");
 const koaMiddleware = require("../../src/koa-middleware");
 
-module.exports = function () {
+module.exports = function (tracerOptions) {
 
 	const app = new koa();
 	
+	if(!tracerOptions)
+		tracerOptions = require("../../src/global-tracer")();
+
 	const db = {
 		tobi: { name: "tobi", species: "ferret" },
 		loki: { name: "loki", species: "ferret" },
@@ -27,8 +30,8 @@ module.exports = function () {
 			ctx.body = pet.name + " is a " + pet.species;
 		}
 	};
-	
-	app.use(koaMiddleware("koa-test"));
+
+	app.use(koaMiddleware("koa-test", tracerOptions.tracer, tracerOptions.ctxImpl));
 	app.use(_.get("/", pets.list));
 	app.use(_.get("/pets/:name", pets.show));
 

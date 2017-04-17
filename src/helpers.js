@@ -5,11 +5,12 @@ const {
 
 function readHeader(headers, headerKey) {
 	const val = headers[headerKey.toLowerCase()] || headers[headerKey];
-
-	if (val !== null) {
+	console.log("VAL ", val);
+	if (val !== null && val !== undefined) {
 		return new Some(val);
 	} 
 	else {
+		console.log("returnining None");
 		return None;
 	}
 }

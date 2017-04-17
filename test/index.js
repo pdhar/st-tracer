@@ -1,36 +1,44 @@
 const createKoaServer = require("./mock-servers/koa");
-const fetch = require("node-fetch");
-let koaServer, baseUrl;
+const request = require("supertest");
+const expect = require("chai").expect;
+const sinon = require("sinon");
+const {ExplicitContext, Tracer} = require("zipkin");
 
+let app, server, agent, record;
 beforeEach("start koa server", function (done) {
-	koaServer = createKoaServer().listen(function () {
-		baseUrl = `http://localhost:${this.address().port}/`;
-		done();
-	});
+	
+	record = sinon.spy();
+	const recorder = {record};
+	const ctxImpl = new ExplicitContext();
+	const tracer = new Tracer({recorder, ctxImpl});
+	
+	app = createKoaServer({tracer, ctxImpl});
+	server = app.listen();
+	agent = request.agent(server);
+	done();
 });
 
 afterEach("stop koa server", function (done) {
-	koaServer.close(done);
+	server.close(done);
 });
 
 describe("koa tracer middleware ", function () {
+	
 	it("accepts valid trace headers and records annotations via middleware", function (done) {
-		fetch(baseUrl, {
-			method: "get",
-			headers: {
-				"X-B3-TraceId": "aaa",
-				"X-B3-SpanId": "bbb",
-				"X-B3-Flags": "1"
-			}
+
+		agent
+		.get("/")
+		.set("Accept", "application/json")
+		.expect(() => {
+
+			const annotations = record.args.map(args => args[0]);
+			
+			expect(annotations[0].annotation.annotationType).to.equal("ServiceName");
+			expect(annotations[0].annotation.serviceName).to.equal("koa-test");
 		})
-		.then(res => res.json())
-		.then((res) => {
-			console.log("RES: ", res);
-			done();
-		})
-		.catch(err => {
-		//   koaServer.close();
-			done(err);
-		});
+		.expect(200, done);
+
 	});
+
+	
 });
