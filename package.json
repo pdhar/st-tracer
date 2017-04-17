@@ -1,0 +1,19 @@
+{
+  "name": "@socialtables/st-tracer",
+  "version": "0.1.0-alpha",
+  "description": "Distributed tracing tool to ST microservices built on top of zipkin.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "zipkin",
+    "tracing",
+    "superagent",
+    "koa",
+    "koa-request",
+    "middleware"
+  ],
+  "author": "devops",
+  "license": "ISC"
+}
