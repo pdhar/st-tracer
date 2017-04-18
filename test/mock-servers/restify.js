@@ -40,9 +40,11 @@ module.exports = function (tracerOptions) {
 		// make another request back to koa service.
 		console.log("@@@@@@@@@ NEED TO MAKE REQ", koaRequest);
 		Co(function* () {
+
 			return yield koaRequest.get({
 				url: "http://localhost:3012/pets/tobi",
-				json: true
+				json: true,
+				tracer: tracerOptions.tracer
 			});
 		})
 		.then((result) => {
@@ -58,6 +60,7 @@ module.exports = function (tracerOptions) {
 			res.end(JSON.stringify(pets.list()));
 		})
 		.then(next);
+
 	});
 
 	return app;
