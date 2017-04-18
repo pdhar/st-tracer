@@ -23,6 +23,7 @@ function request (uri, options) {
 }
 
 function generateTrace(error, response, uri, options={}) {
+
 	const serviceName = "diagram-backend", remoteServiceName="event-service";
 	const {tracer, ctxImpl, localVariable} = require("./global-tracer")();
 
@@ -87,6 +88,7 @@ for (var attr in _request) {
 					return function (callback) { 
 						_request[attr](uri, options, function (error, response, body) { 
 							
+							console.log("INSIDE RES, ", response);
 							// generateTrace(error, response, uri, options);
 
 							callback(error, response, body); 
