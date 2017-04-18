@@ -8,6 +8,7 @@ const {ExplicitContext, Tracer} = require("zipkin");
 
 let app, server, agent, record;
 let app_2, server_2, record_2;
+const koaServicePort=3012, restifyServicePort=3015;
 
 beforeEach("start restify server", function (done) {
 	// Create a restify server.
@@ -17,7 +18,7 @@ beforeEach("start restify server", function (done) {
 	const tracer = new Tracer({recorder, ctxImpl});
 	
 	app_2 = createRestifyServer({tracer, ctxImpl});
-	server_2 = app_2.listen();
+	server_2 = app_2.listen(restifyServicePort);
 
 	done();
 });
@@ -36,7 +37,7 @@ describe("for a running restify service", function() {
 		const tracer = new Tracer({recorder, ctxImpl});
 		
 		app = createKoaServer({tracer, ctxImpl, restifyUrl: `http://localhost:${server_2.address().port}`});
-		server = app.listen();
+		server = app.listen(koaServicePort);
 		agent = request.agent(server);
 
 		done();
@@ -62,7 +63,7 @@ describe("for a running restify service", function() {
 				
 				// Verify that restify annotation have been added.
 				const annotations_2 = record_2.args.map(args => args[0]);
-				console.log("@@@@@@@@ annotations_2 ", annotations_2);
+				// console.log("@@@@@@@@ annotations_2 ", annotations_2);
 			})
 			.expect(200, done);
 

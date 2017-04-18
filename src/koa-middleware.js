@@ -9,6 +9,8 @@ const {
 
 module.exports = (serviceName, tracer) => {
 
+	console.log("##### INSIDE KOA MIDDLEWARE");
+
 	if(!tracer)
 		tracer = require("./global-tracer")().tracer;
 

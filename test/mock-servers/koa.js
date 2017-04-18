@@ -37,10 +37,10 @@ module.exports = function (tracerOptions) {
 		},
 
 		show: (ctx, name) => {
-			
+			console.log("INSIED PETS");
 			const pet = db[name];
 			if (!pet) return ctx.throw("cannot find that pet", 404);
-			ctx.body = pet.name + " is a " + pet.species;
+			ctx.body = {text: `${pet.name} is a ${pet.species}`};
 		}
 	};
 

@@ -33,39 +33,12 @@ function generateTrace(error, response, uri, options={}) {
 
 	const prevContext = ctxImpl.getContext();
 	console.log("###### prevContext ", prevContext);
+	console.log("error:  ", error);
+	console.log("RESP:  ", response);
 	console.log("response ", response.body);
 
 	const childId = tracer.createChildId();
 	console.log("@@@@@@@@@ childId ", childId);
-
-	// return;
-	// ctxImpl.letContext({error, response, uri, options, prevContext}, () => {
-
-		// tracer.scoped(() => {
-		// const {prevContext, error, response, uri, options} = ctxImpl.getContext();
-
-		// console.log("########## prevContext: ", prevContext.traceId);
-		// // console.log("@@@@@@@ ctxImpl: ", ctxImpl.getContext());
-
-		// // if (helpers.containsRequiredHeaders(this.req.headers)) {
-		// // 	console.log("@@@@@@@@@@ YOLO: Found headers ");
-		// // }
-		// // else {
-		// // 	console.log("@@@@@@@@@@ NOLO: not Found headers ");
-		// // }
-		// // const id = new TraceId({
-		// // 	traceId: prevContext.traceId,
-		// // 	parentId: prevContext.traceId,
-		// // 	spanId: tracer.createChildId(),
-		// // 	sampled: sampled.map(helpers.stringToBoolean),
-		// // 	flags
-		// // });
-		// // tracer.setId(id);
-		
-		// // tracer.setId(tracer.createRootId());
-		// const childId = tracer.createChildId();
-		
-		// console.log("@@@@@@@@@ childId ", childId);
 
 	tracer.setId(childId);
 
@@ -114,7 +87,7 @@ for (var attr in _request) {
 					return function (callback) { 
 						_request[attr](uri, options, function (error, response, body) { 
 							
-							generateTrace(error, response, uri, options);
+							// generateTrace(error, response, uri, options);
 
 							callback(error, response, body); 
 

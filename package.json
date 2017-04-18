@@ -17,7 +17,10 @@
   "author": "devops",
   "license": "ISC",
   "dependencies": {
+    "co": "^4.6.0",
+    "dns": "^0.2.2",
     "koa": "^2.2.0",
+    "koa-request": "^1.0.0",
     "koa-route": "^3.2.0",
     "restify": "^4.3.0",
     "url": "^0.11.0",

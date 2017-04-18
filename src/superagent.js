@@ -5,7 +5,8 @@ const {
 
 function getOverridenSuperAgent(tracer) {
 
-	// console.log("tracer ", tracer);
+	console.log("###### INSIDE SUPERAGENT TRACER ");
+
 	const _tracer = tracer;
 	const _superagent = require("superagent");
 	const overrideSuperAgent = {};
@@ -34,7 +35,7 @@ function zipkinWrapper(superagent, tracer, attr, url, opts={}) {
 	// const tracer = new Tracer({ctxImpl, recorder});
 
 	if(!tracer)
-		tracer = require("../../src/global-tracer")().tracer;
+		tracer = require("./global-tracer")().tracer;
 
 	return new Promise((resolve, reject) => {
 
