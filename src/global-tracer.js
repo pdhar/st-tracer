@@ -6,7 +6,7 @@ var STracker = (() => {
 	function STracker(){
 		this.localVariable = 5;
 
-		const zipkinBaseUrl = "http://localhost:9411";
+		const zipkinBaseUrl = process.env.zipkinUrl || "http://localhost:9411";
 		
 		this.ctxImpl = new CLSContext("zipkin");
 
@@ -34,19 +34,18 @@ var STracker = (() => {
 	};
 })();
 
+// var instance1 = new STracker();
+// var instance2 = new STracker();
 
-var instance1 = new STracker();
-var instance2 = new STracker();
+// console.log(instance1 === instance2); // true
 
-console.log(instance1 === instance2); // true
+// console.log(instance1.localVariable, instance2.localVariable); // 5 5
 
-console.log(instance1.localVariable, instance2.localVariable); // 5 5
+// instance1.localVariable = 20;
+// console.log(instance1.localVariable, instance2.localVariable); // 20 20
 
-instance1.localVariable = 20;
-console.log(instance1.localVariable, instance2.localVariable); // 20 20
+// console.log(instance1.getLocalVariable()); // 20
 
-console.log(instance1.getLocalVariable()); // 20
-
-module.exports = function () {
+module.exports = function (options) {
 	return new STracker();
 };

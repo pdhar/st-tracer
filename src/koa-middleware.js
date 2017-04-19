@@ -9,7 +9,7 @@ const {
 
 module.exports = (serviceName, tracer) => {
 
-	console.log("##### INSIDE KOA MIDDLEWARE");
+	console.log("##### INSIDE KOA MIDDLEWARE: ", serviceName);
 
 	if(!tracer)
 		tracer = require("./global-tracer")().tracer;
@@ -42,20 +42,10 @@ module.exports = (serviceName, tracer) => {
 		} 
 		else {
 
+			console.log("######## header not found ");
+			// No Header Present, create a new Trace.
 			tracer.setId(tracer.createRootId());
-
-			if (helpers.readHeader(this.req.headers, Header.Flags)) {
-
-				const currentId = tracer.id;
-				const idWithFlags = new TraceId({
-					traceId: new Some(currentId.traceId),
-					spanId: new Some(currentId.spanId),
-					sampled: currentId.sampled.map(helpers.stringToBoolean),
-					flags: helpers.readHeader(this.req.headers, Header.Flags)
-				});
-
-				tracer.setId(idWithFlags);
-			}
+			console.log("####### TRACER ", tracer);
 		}
 
 		const id = tracer.id;

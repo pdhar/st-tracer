@@ -10,7 +10,7 @@ const {
   TraceId
 } = require("zipkin");
 
-const url = require("url");
+// const url = require("url");
 
 function containsRequiredHeaders(req) {
 	return req.header(Header.TraceId) !== undefined &&
@@ -36,7 +36,9 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 
 	return (req, res, next) => {
 		// try {
-			
+			// "X-Requested-With", "X-B3-TraceId",
+			// "X-B3-ParentSpanId", "X-B3-SpanId", "X-B3-Sampled"
+		console.log("###### INSIDE RESTIFY. ", req.header("x-b3-traceId"));
 		
 		tracer.scoped(() => {
 			
@@ -50,7 +52,7 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 			}
 
 			if (containsRequiredHeaders(req)) {
-			
+				console.log("###### CONTAINS HEADERS");
 				const spanId = readHeader(Header.SpanId);
 				spanId.ifPresent(sid => {
 					const traceId = readHeader(Header.TraceId);
@@ -67,6 +69,7 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 					tracer.setId(id);
 				});
 			} else {
+				console.log("###### NO HEADERS");
 				tracer.setId(tracer.createRootId());
 				if (req.header(Header.Flags)) {
 					const currentId = tracer.id;
@@ -86,11 +89,11 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 			console.log("service name : ", serviceName);
 			tracer.recordServiceName(serviceName);
 			tracer.recordRpc(req.method);
-			tracer.recordBinary("http.url", url.format({
-				protocol: req.isSecure() ? "https" : "http",
-				host: req.header("host"),
-				pathname: req.path()
-			}));
+			// tracer.recordBinary("http.url", url.format({
+			// 	protocol: req.isSecure() ? "https" : "http",
+			// 	host: req.header("host"),
+			// 	pathname: req.path()
+			// }));
 			tracer.recordAnnotation(new Annotation.ServerRecv());
 			tracer.recordAnnotation(new Annotation.LocalAddr({port}));
 

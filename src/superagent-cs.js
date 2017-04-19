@@ -1,7 +1,12 @@
 const { 
 	Annotation, 
-	Request
+	Request,
+	ExplicitContext,
+	Tracer,
+	BatchRecorder
 } = require("zipkin");
+
+const {HttpLogger} = require("zipkin-transport-http");
 
 const _superagent = require("superagent");
 
@@ -30,14 +35,24 @@ function getOverridenSuperAgent(tracer) {
 
 function zipkinWrapper(superagent, tracer, attr, url, opts={}) {
 	
-	console.log("####### INSIDE zipkinWrapper ");
+	console.log("####### INSIDE zipkinWrapper CS ");
 	const {serviceName = "unknown", remoteServiceName} = opts;
 	// const ctxImpl = new ExplicitContext();
 	// const {recorder} = require("./recorder");
 	// const tracer = new Tracer({ctxImpl, recorder});
 
 	if(!tracer){
-		tracer = require("./global-tracer")().tracer;
+		const ctxImpl = new ExplicitContext();
+
+		const zipkinBaseUrl = process.env.zipkinUrl || "http://localhost:9411";
+
+		const recorder = new BatchRecorder({
+			logger: new HttpLogger({
+				endpoint: `${zipkinBaseUrl}/api/v1/spans`
+			})
+		});	
+
+		tracer = new Tracer({ctxImpl: ctxImpl, recorder: recorder});
 	}
 
 	console.log("#### after tracer ... ");

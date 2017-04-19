@@ -14,9 +14,9 @@ const {
 
 const _request = require("request");
 
-function request (config, options) { 
+function request (config) { 
 	return function (callback) { 
-		_request(config, options, function (error, response, body) { 
+		_request(config, function (error, response, body) { 
 			callback(error, response, body); 
 		});
 	};
@@ -41,7 +41,7 @@ function generateTrace(error, response, config, options={}) {
 	// console.log("###### KOA REQ ctxImpl", ctxImpl.getContext());
 
 	// const prevContext = ctxImpl.getContext();
-	console.log("###### prevContext ", tracer._ctxImpl);
+	console.log("###### prevContext ", tracer._ctxImpl.getContext());
 
 	let nextId;
 
@@ -100,15 +100,15 @@ for (var attr in _request) {
 		if (["get","post","put","patch","head","del"].indexOf(attr) > -1) {
 			
 			request[attr] = ((attr) => {
-				return function (config, options) { 
+				return function (config) { 
 					
 					return function (callback) { 
-						_request[attr](config, options, function (error, response, body) { 
+						_request[attr](config, function (error, response, body) { 
 							
 							// console.log("INSIDE RES, ", response);
 							// console.log("INSIDE ERR, ", error);
 							// console.log("OPTIONS ", options);
-							generateTrace(error, response, config, options);
+							generateTrace(error, response, config);
 
 							callback(error, response, body); 
 
