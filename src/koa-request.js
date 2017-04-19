@@ -22,7 +22,7 @@ function request (config) {
 	};
 }
 
-function generateTrace(error, response, config, options={}) {
+function generateTrace(config, options={}) {
 
 	const serviceName = "diagram-backend", remoteServiceName="event-service";
 	// const {tracer, ctxImpl, localVariable} = require("./global-tracer")();
@@ -77,21 +77,8 @@ function generateTrace(error, response, config, options={}) {
 	const zipkinOpts = Request.addZipkinHeaders(options, traceId);
 	console.log("############## zipkinOpts ", zipkinOpts);
 	// console.log("traceId: ", traceId);
-	if (!error){
-		tracer.scoped(() => {
-			tracer.setId(traceId);
-			tracer.recordBinary("http.status_code", response.statusCode.toString());
-			tracer.recordBinary("http.text", JSON.stringify(response.body).toString());
-			tracer.recordAnnotation(new Annotation.ClientRecv());
-		});
-	} 
-	else {
-		tracer.scoped(() => {
-			tracer.setId(traceId);
-			tracer.recordBinary("error", error.toString());
-			tracer.recordAnnotation(new Annotation.ClientRecv());
-		});
-	}
+	return {tracer, traceId, zipkinOpts};
+
 }
 
 //copy request"s properties
@@ -102,16 +89,36 @@ for (var attr in _request) {
 			request[attr] = ((attr) => {
 				return function (config) { 
 					
-					return function (callback) { 
+					return function (callback) {
+
+						const {tracer, traceId, zipkinOpts } = generateTrace(config);
+						config.headers = Object.assign({}, config.headers, zipkinOpts.headers);
+
 						_request[attr](config, function (error, response, body) { 
 							
+							console.log("@@@@ CONFIG : ", config);
 							// console.log("INSIDE RES, ", response);
 							// console.log("INSIDE ERR, ", error);
 							// console.log("OPTIONS ", options);
-							generateTrace(error, response, config);
+							
 
 							callback(error, response, body); 
 
+							if (!error){
+								tracer.scoped(() => {
+									tracer.setId(traceId);
+									tracer.recordBinary("http.status_code", response.statusCode.toString());
+									tracer.recordBinary("http.text", JSON.stringify(response.body).toString());
+									tracer.recordAnnotation(new Annotation.ClientRecv());
+								});
+							} 
+							else {
+								tracer.scoped(() => {
+									tracer.setId(traceId);
+									tracer.recordBinary("error", error.toString());
+									tracer.recordAnnotation(new Annotation.ClientRecv());
+								});
+							}
 						});
 					};
 				};

@@ -38,8 +38,10 @@ module.exports = function restifyMiddleware(serviceName = "unknown", tracer, por
 		// try {
 			// "X-Requested-With", "X-B3-TraceId",
 			// "X-B3-ParentSpanId", "X-B3-SpanId", "X-B3-Sampled"
-		console.log("###### INSIDE RESTIFY. ", req.header("x-b3-traceId"));
+		console.log("###### INSIDE RESTIFY. ", req.header("X-B3-TraceId"));
 		
+		// console.log("@@@@@@@ HEADERS ", JSON.stringify(req.headers));
+
 		tracer.scoped(() => {
 			
 			function readHeader(header) {
