@@ -42,10 +42,10 @@ module.exports = (serviceName, tracer) => {
 		} 
 		else {
 
-			console.log("######## header not found ");
+			console.log("######## header not found.. Creating new Root ");
 			// No Header Present, create a new Trace.
 			tracer.setId(tracer.createRootId());
-			console.log("####### TRACER ", tracer);
+			// console.log("####### TRACER ", tracer);
 		}
 
 		const id = tracer.id;

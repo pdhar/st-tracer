@@ -24,7 +24,15 @@ function request (config) {
 
 function generateTrace(config, options={}) {
 
-	const serviceName = "diagram-backend", remoteServiceName="event-service";
+	console.log("@@@@@@@@@ KOA CONFIG: ", config);
+	process.stdout.write("HELLO WORLD");
+
+	let serviceName = "diagram-backend", remoteServiceName="event-service";
+	
+	if(config.url.match(/diagram/)){
+		remoteServiceName = "diagram-service-new";
+	}
+
 	// const {tracer, ctxImpl, localVariable} = require("./global-tracer")();
 	let tracer = config.tracer;
 
@@ -100,7 +108,6 @@ for (var attr in _request) {
 							// console.log("INSIDE RES, ", response);
 							// console.log("INSIDE ERR, ", error);
 							// console.log("OPTIONS ", options);
-							
 
 							callback(error, response, body); 
 

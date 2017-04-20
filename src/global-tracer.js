@@ -34,18 +34,6 @@ var STracker = (() => {
 	};
 })();
 
-// var instance1 = new STracker();
-// var instance2 = new STracker();
-
-// console.log(instance1 === instance2); // true
-
-// console.log(instance1.localVariable, instance2.localVariable); // 5 5
-
-// instance1.localVariable = 20;
-// console.log(instance1.localVariable, instance2.localVariable); // 20 20
-
-// console.log(instance1.getLocalVariable()); // 20
-
-module.exports = function (options) {
+module.exports = function () {
 	return new STracker();
 };

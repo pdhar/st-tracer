@@ -1,1 +1,3 @@
 # ST-Tracer
+
+Distributed tracer built on top of opentracing.io/zipkin for adding tracing to a microservice.
